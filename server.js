@@ -57,9 +57,9 @@ let isCacheOffline = true;
 async function updateMarketPrices() {
   console.log('[JOBS] Live market rates fetch started...');
   try {
-    // 100% Cloudflare-proof, robust APIs (CoinGecko & ExchangeRate-API)
+    // 100% Cloudflare-proof, robust APIs (Binance PAXGUSDT & ExchangeRate-API)
     const [goldResponse, currencyResponse] = await Promise.all([
-      axios.get('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd', AXIOS_CONFIG),
+      axios.get('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT', AXIOS_CONFIG),
       axios.get('https://open.er-api.com/v6/latest/USD', AXIOS_CONFIG),
     ]);
 
@@ -67,7 +67,7 @@ async function updateMarketPrices() {
       throw new Error('API returned empty or invalid data');
     }
 
-    const onsGoldUSD = parseFloat(goldResponse.data['pax-gold'].usd);
+    const onsGoldUSD = parseFloat(goldResponse.data.price);
     const usdTryRate = parseFloat(currencyResponse.data.rates.TRY);
     const eurTryRate = parseFloat(usdTryRate / currencyResponse.data.rates.EUR);
 
@@ -167,13 +167,14 @@ app.get('/rates', (req, res) => {
 // API Endpoint 3: Diagnostics Endpoint (Helps identify IP blocks or rate limits)
 app.get('/debug', async (req, res) => {
   try {
-    const goldResponse = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd', AXIOS_CONFIG);
+    const goldResponse = await axios.get('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT', AXIOS_CONFIG);
     const currencyResponse = await axios.get('https://open.er-api.com/v6/latest/USD', AXIOS_CONFIG);
     res.json({
       success: true,
       gold_status: goldResponse.status,
+      gold_price: goldResponse.data.price,
       currency_status: currencyResponse.status,
-      data: 'Valid Data Received'
+      currency_try: currencyResponse.data.rates.TRY
     });
   } catch (error) {
     res.json({
