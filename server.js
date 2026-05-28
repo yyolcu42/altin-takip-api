@@ -25,6 +25,20 @@ const GOLD_NAMES = {
   EUR: 'Euro',
 };
 
+// Standard web browser headers to bypass Cloudflare/WAF 403 Forbidden bot blocks
+const AXIOS_CONFIG = {
+  headers: {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Cache-Control': 'no-cache',
+    'Pragma': 'no-cache',
+    'Origin': 'https://api.genelpara.com',
+    'Referer': 'https://api.genelpara.com/'
+  },
+  timeout: 15000
+};
+
 // Fallback rates if API is completely unreachable at first startup
 const INITIAL_FALLBACK_RATES = {
   GA: { alis: '6428.12', satis: '6561.34', degisim: '-1.15', oran: '-1.74', yon: 'moneyDown', kur: 'TRY', sembol: '₺', name: 'Gram Altın', key: 'GA' },
@@ -103,8 +117,8 @@ async function updateMarketPrices() {
   console.log('[JOBS] Live market rates fetch started...');
   try {
     const [goldResponse, dovizResponse] = await Promise.all([
-      axios.get(GENEL_PARA_GOLD_URL, { timeout: 10000 }),
-      axios.get(GENEL_PARA_DOVIZ_URL, { timeout: 10000 }),
+      axios.get(GENEL_PARA_GOLD_URL, AXIOS_CONFIG),
+      axios.get(GENEL_PARA_DOVIZ_URL, AXIOS_CONFIG),
     ]);
 
     if (!goldResponse.data || !dovizResponse.data) {
@@ -196,7 +210,7 @@ app.get('/rates', (req, res) => {
 // API Endpoint 3: Diagnostics Endpoint (Helps identify IP blocks or rate limits)
 app.get('/debug', async (req, res) => {
   try {
-    const response = await axios.get(GENEL_PARA_GOLD_URL, { timeout: 10000 });
+    const response = await axios.get(GENEL_PARA_GOLD_URL, AXIOS_CONFIG);
     res.json({
       success: true,
       status: response.status,
