@@ -166,8 +166,8 @@ async function updateMarketPrices() {
 // Fetch live rates once immediately at startup
 updateMarketPrices();
 
-// Schedule rates updates every 60 seconds (safe, zero rate limits)
-setInterval(updateMarketPrices, 60000);
+// Schedule rates updates every 30 seconds (safe, zero rate limits)
+setInterval(updateMarketPrices, 30000);
 
 // API Endpoint 1: Home Page Info
 app.get('/', (req, res) => {
