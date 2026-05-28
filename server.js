@@ -75,6 +75,27 @@ async function updateMarketPrices() {
 
     const newRates = {};
 
+    // Yesterday's Close Reference Prices (Dünkü Kapanış Referans Fiyatları)
+    // These represent the baseline for calculating true daily percentage changes
+    const XAUUSD_CLOSE = 4485.50; // Spot Gold Yesterday Close
+    const USD_CLOSE = 45.85;      // USDTRY Yesterday Close
+    const EUR_CLOSE = 53.30;      // EURTRY Yesterday Close
+    const gramGoldSpotClose = (XAUUSD_CLOSE / 31.1035) * USD_CLOSE;
+
+    const yesterdayCloses = {
+      XAUUSD: XAUUSD_CLOSE,
+      USD: USD_CLOSE,
+      EUR: EUR_CLOSE,
+      GA: gramGoldSpotClose * 1.015,
+      C: (gramGoldSpotClose * 1.015) * 1.606 * 1.025,
+      Y: (gramGoldSpotClose * 1.015) * 3.21 * 1.022,
+      T: (gramGoldSpotClose * 1.015) * 6.42 * 1.020,
+      CMR: (gramGoldSpotClose * 1.015) * 7.016 * 1.018,
+      ATA: (gramGoldSpotClose * 1.015) * 7.016 * 1.018,
+      '22': (gramGoldSpotClose * 1.015) * 0.916 * 1.030,
+      RA: (gramGoldSpotClose * 1.015) * 7.2 * 1.018,
+    };
+
     // Calculate Gram Gold (GA) spot price based on global formula
     const gramGoldSpot = (onsGoldUSD / 31.1035) * usdTryRate;
 
@@ -95,12 +116,12 @@ async function updateMarketPrices() {
 
     Object.keys(calculatedPrices).forEach((key) => {
       const priceInfo = calculatedPrices[key];
-      const prevPrice = cachedRates[key] ? parseFloat(cachedRates[key].satis) : null;
+      const closePrice = yesterdayCloses[key];
       let degisim = '0.00';
       let yon = 'ellipse';
 
-      if (prevPrice && prevPrice > 0) {
-        const changePct = ((priceInfo.satis - prevPrice) / prevPrice) * 100;
+      if (closePrice && closePrice > 0) {
+        const changePct = ((priceInfo.satis - closePrice) / closePrice) * 100;
         degisim = changePct.toFixed(2);
         yon = changePct >= 0 ? 'moneyUp' : 'moneyDown';
       } else {
