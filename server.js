@@ -193,6 +193,25 @@ app.get('/rates', (req, res) => {
   });
 });
 
+// API Endpoint 3: Diagnostics Endpoint (Helps identify IP blocks or rate limits)
+app.get('/debug', async (req, res) => {
+  try {
+    const response = await axios.get(GENEL_PARA_GOLD_URL, { timeout: 10000 });
+    res.json({
+      success: true,
+      status: response.status,
+      data: response.data ? 'Valid Data Received' : 'No Data'
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+      status: error.response ? error.response.status : null,
+      code: error.code
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`==================================================`);
   console.log(`🚀 ALTIN PUSULASI API SERVER ACTIVE ON PORT ${PORT}`);
