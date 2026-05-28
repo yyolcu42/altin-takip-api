@@ -44,8 +44,8 @@ const INITIAL_FALLBACK_RATES = {
   CMR: { alis: '21050.00', satis: '21450.00', degisim: '+0.10', oran: '0.10', yon: 'moneyUp', kur: 'TRY', sembol: '₺', name: 'Cumhuriyet Altını', key: 'CMR' },
   ATA: { alis: '21100.00', satis: '21520.00', degisim: '+0.10', oran: '0.10', yon: 'moneyUp', kur: 'TRY', sembol: '₺', name: 'Ata Altın', key: 'ATA' },
   '22': { alis: '2860.50', satis: '3020.30', degisim: '+0.15', oran: '0.15', yon: 'moneyUp', kur: 'TRY', sembol: '₺', name: '22 Ayar Bilezik', key: '22' },
-  USD: { alis: '32.1800', satis: '32.3100', degisim: '+0.02', oran: '0.02', yon: 'moneyUp', kur: 'TRY', sembol: '₺', name: 'Amerikan Doları', key: 'USD' },
-  EUR: { alis: '34.8200', satis: '34.9800', degisim: '+0.01', oran: '0.01', yon: 'moneyUp', kur: 'TRY', sembol: '₺', name: 'Euro', key: 'EUR' },
+  USD: { alis: '32.2500', satis: '32.2500', degisim: '+0.02', oran: '0.02', yon: 'moneyUp', kur: 'TRY', sembol: '₺', name: 'Amerikan Doları', key: 'USD' },
+  EUR: { alis: '34.9000', satis: '34.9000', degisim: '+0.01', oran: '0.01', yon: 'moneyUp', kur: 'TRY', sembol: '₺', name: 'Euro', key: 'EUR' },
 };
 
 // Global Cache Variables
@@ -102,8 +102,8 @@ async function updateMarketPrices() {
     // Apply exact Kapalıçarşı retail physical spread algorithms
     const calculatedPrices = {
       XAUUSD: { alis: onsGoldUSD, satis: onsGoldUSD, kur: 'USD', sembol: '$' },
-      USD: { alis: usdTryRate * 0.997, satis: usdTryRate * 1.003, kur: 'TRY', sembol: '₺' },
-      EUR: { alis: eurTryRate * 0.997, satis: eurTryRate * 1.003, kur: 'TRY', sembol: '₺' },
+      USD: { alis: usdTryRate, satis: usdTryRate, kur: 'TRY', sembol: '₺' },
+      EUR: { alis: eurTryRate, satis: eurTryRate, kur: 'TRY', sembol: '₺' },
       GA: { alis: gramGoldSpot * 1.015 * 0.982, satis: gramGoldSpot * 1.015, kur: 'TRY', sembol: '₺' },
       C: { alis: (gramGoldSpot * 1.015) * 1.606 * 1.025 * 0.975, satis: (gramGoldSpot * 1.015) * 1.606 * 1.025, kur: 'TRY', sembol: '₺' },
       Y: { alis: (gramGoldSpot * 1.015) * 3.21 * 1.022 * 0.978, satis: (gramGoldSpot * 1.015) * 3.21 * 1.022, kur: 'TRY', sembol: '₺' },
