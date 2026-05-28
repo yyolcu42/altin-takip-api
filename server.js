@@ -80,7 +80,7 @@ async function updateMarketPrices() {
 
     // Apply exact Kapalıçarşı retail physical spread algorithms
     const calculatedPrices = {
-      XAUUSD: { alis: onsGoldUSD * 0.999, satis: onsGoldUSD * 1.001, kur: 'USD', sembol: '$' },
+      XAUUSD: { alis: onsGoldUSD, satis: onsGoldUSD, kur: 'USD', sembol: '$' },
       USD: { alis: usdTryRate * 0.997, satis: usdTryRate * 1.003, kur: 'TRY', sembol: '₺' },
       EUR: { alis: eurTryRate * 0.997, satis: eurTryRate * 1.003, kur: 'TRY', sembol: '₺' },
       GA: { alis: gramGoldSpot * 1.015 * 0.982, satis: gramGoldSpot * 1.015, kur: 'TRY', sembol: '₺' },
