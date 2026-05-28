@@ -57,18 +57,17 @@ let isCacheOffline = true;
 async function updateMarketPrices() {
   console.log('[JOBS] Live market rates fetch started...');
   try {
-    // 100% Cloudflare-proof, robust APIs (Kraken PAXGUSD & ExchangeRate-API)
+    // 100% Cloudflare-proof, robust APIs (Gold-API & ExchangeRate-API)
     const [goldResponse, currencyResponse] = await Promise.all([
-      axios.get('https://api.kraken.com/0/public/Ticker?pair=PAXGUSD', AXIOS_CONFIG),
+      axios.get('https://api.gold-api.com/price/XAU', AXIOS_CONFIG),
       axios.get('https://open.er-api.com/v6/latest/USD', AXIOS_CONFIG),
     ]);
 
-    if (!goldResponse.data || !goldResponse.data.result || !currencyResponse.data || !currencyResponse.data.rates) {
+    if (!goldResponse.data || !goldResponse.data.price || !currencyResponse.data || !currencyResponse.data.rates) {
       throw new Error('API returned empty or invalid data');
     }
 
-    const resultKeys = Object.keys(goldResponse.data.result);
-    const onsGoldUSD = parseFloat(goldResponse.data.result[resultKeys[0]].c[0]);
+    const onsGoldUSD = parseFloat(goldResponse.data.price);
     const usdTryRate = parseFloat(currencyResponse.data.rates.TRY);
     const eurTryRate = parseFloat(usdTryRate / currencyResponse.data.rates.EUR);
 
@@ -168,14 +167,12 @@ app.get('/rates', (req, res) => {
 // API Endpoint 3: Diagnostics Endpoint (Helps identify IP blocks or rate limits)
 app.get('/debug', async (req, res) => {
   try {
-    const goldResponse = await axios.get('https://api.kraken.com/0/public/Ticker?pair=PAXGUSD', AXIOS_CONFIG);
+    const goldResponse = await axios.get('https://api.gold-api.com/price/XAU', AXIOS_CONFIG);
     const currencyResponse = await axios.get('https://open.er-api.com/v6/latest/USD', AXIOS_CONFIG);
-    const resultKeys = Object.keys(goldResponse.data.result);
-    const goldPrice = goldResponse.data.result[resultKeys[0]].c[0];
     res.json({
       success: true,
       gold_status: goldResponse.status,
-      gold_price: goldPrice,
+      gold_price: goldResponse.data.price,
       currency_status: currencyResponse.status,
       currency_try: currencyResponse.data.rates.TRY
     });
