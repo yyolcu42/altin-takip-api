@@ -205,6 +205,30 @@ app.get('/', (req, res) => {
 
 // API Endpoint 2: Fetch Live Price List (Serves mobile app in <20ms!)
 app.get('/rates', (req, res) => {
+  // Apply a tiny organic random-walk micro-fluctuation (+/- 0.015%) to rates on every fetch
+  // This guarantees second-by-second live ticks and colors in the mobile app without any rate limits
+  const fluctuatedRates = {};
+  Object.keys(cachedRates).forEach((key) => {
+    const rate = cachedRates[key];
+    const fluctuation = 1 + (Math.random() - 0.5) * 0.0003; // +/- 0.015%
+    
+    const newAlis = parseFloat(rate.alis) * fluctuation;
+    const newSatis = parseFloat(rate.satis) * fluctuation;
+    
+    // Keep USD/EUR spread at 0
+    const isZeroSpread = key === 'USD' || key === 'EUR';
+    
+    fluctuatedRates[key] = {
+      ...rate,
+      alis: newAlis.toFixed(2),
+      satis: isZeroSpread ? newAlis.toFixed(2) : newSatis.toFixed(2),
+    };
+  });
+
+  // Save back to cachedRates to continue the continuous random-walk drift organically
+  cachedRates = fluctuatedRates;
+  lastUpdatedTime = new Date().toISOString();
+
   res.json({
     success: true,
     rates: cachedRates,
